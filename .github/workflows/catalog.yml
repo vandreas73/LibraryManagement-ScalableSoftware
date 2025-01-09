@@ -39,18 +39,18 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Set up .NET Core
-        uses: actions/setup-dotnet@v4
-        with:
-          dotnet-version: ${{ env.DOTNET_VERSION }}
+      # - name: Set up .NET Core
+      #   uses: actions/setup-dotnet@v4
+      #   with:
+      #     dotnet-version: ${{ env.DOTNET_VERSION }}
 
-      - name: Set up dependency caching for faster builds
-        uses: actions/cache@v3
-        with:
-          path: ~/.nuget/packages
-          key: ${{ runner.os }}-nuget-${{ hashFiles('**/packages.lock.json') }}
-          restore-keys: |
-            ${{ runner.os }}-nuget-
+      # - name: Set up dependency caching for faster builds
+      #   uses: actions/cache@v3
+      #   with:
+      #     path: ~/.nuget/packages
+      #     key: ${{ runner.os }}-nuget-${{ hashFiles('**/packages.lock.json') }}
+      #     restore-keys: |
+      #       ${{ runner.os }}-nuget-
 
   build:
     needs: [setup]
@@ -77,6 +77,6 @@ jobs:
         uses: docker/build-push-action@v5
         with:
           context: ./Catalog
-          file: Dockerfile
+          file: ./Catalog/Dockerfile
           push: true
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/library-management-catalog:latest
