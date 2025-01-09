@@ -80,3 +80,19 @@ jobs:
           file: ./Catalog/Dockerfile
           push: true
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/library-management-catalog:latest
+
+  deploy:
+    needs: [build]
+    runs-on: ubuntu-latest
+    steps:
+    - name: Azure Login
+      uses: azure/login@v1
+      with:
+        creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+    - name: Azure CLI script
+      uses: azure/CLI@v1
+      with:
+        azcliversion: 2.30.0
+        inlineScript: |
+          az webapp config container set --name catalog-container-app --resource-group LibraryManagement --docker-custom-image-name vandreas73/library-management-catalog:latest
