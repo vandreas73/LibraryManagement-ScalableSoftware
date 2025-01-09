@@ -35,4 +35,4 @@ jobs:
         containerAppEnvironment: ${{ env.CONTAINER_APP_ENVIRONMENT_NAME }}
         resourceGroup: ${{ env.RESOURCE_GROUP }}
         environmentVariables: |
-          ConnectionStrings__CatalogContext=abcdefg
+          ConnectionStrings__CatalogContext=${{secrets.ConnectionStrings__CatalogContext}}
