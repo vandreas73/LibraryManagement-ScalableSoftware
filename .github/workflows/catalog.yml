@@ -1,97 +1,36 @@
-# This workflow will build and push a .NET Core app to an Azure Web App when a commit is pushed to your default branch.
-#
-# This workflow assumes you have already created the target Azure App Service web app.
-# For instructions see https://docs.microsoft.com/en-us/azure/app-service/quickstart-dotnetcore?tabs=net60&pivots=development-environment-vscode
-#
-# To configure this workflow:
-#
-# 1. Download the Publish Profile for your Azure Web App. You can download this file from the Overview page of your Web App in the Azure Portal.
-#    For more information: https://docs.microsoft.com/en-us/azure/app-service/deploy-github-actions?tabs=applevel#generate-deployment-credentials
-#
-# 2. Create a secret in your repository named AZURE_WEBAPP_PUBLISH_PROFILE, paste the publish profile contents as the value of the secret.
-#    For instructions on obtaining the publish profile see: https://docs.microsoft.com/azure/app-service/deploy-github-actions#configure-the-github-secret
-#
-# 3. Change the value for the AZURE_WEBAPP_NAME. Optionally, change the AZURE_WEBAPP_PACKAGE_PATH and DOTNET_VERSION environment variables below.
-#
-# For more information on GitHub Actions for Azure: https://github.com/Azure/Actions
-# For more information on the Azure Web Apps Deploy action: https://github.com/Azure/webapps-deploy
-# For more samples to get started with GitHub Action workflows to deploy to Azure: https://github.com/Azure/actions-workflow-samples
-
-name: Build and deploy ASP.Net Core app to an Azure Web App
-
-env:
-  AZURE_WEBAPP_NAME: your-app-name    # set this to the name of your Azure Web App
-  AZURE_WEBAPP_PACKAGE_PATH: '.'      # set this to the path to your web app project, defaults to the repository root
-  DOTNET_VERSION: '5'                 # set this to the .NET Core version to use
-
 on:
   push:
-    branches: [ "main" ]
-  workflow_dispatch:
-
-permissions:
-  contents: read
-
+    branches:
+    - main
+env:
+  DOTNET_CORE_VERSION: 7.0.x
+  CONTAINER_APP_NAME: catalog-container-app
+  CONTAINER_APP_ENVIRONMENT_NAME: managedEnvironment-LibraryManageme-a030
+  RESOURCE_GROUP: LibraryManagement
+  CONTAINER_REGISTRY_NAME: catalogcontainerregistry
+  CONTAINER_REGISTRY_LOGIN_SERVER: catalogcontainerregistry.azurecr.io
 jobs:
-  setup:
-    runs-on: ubuntu-latest
-
-    steps:
-      - uses: actions/checkout@v4
-
-      # - name: Set up .NET Core
-      #   uses: actions/setup-dotnet@v4
-      #   with:
-      #     dotnet-version: ${{ env.DOTNET_VERSION }}
-
-      # - name: Set up dependency caching for faster builds
-      #   uses: actions/cache@v3
-      #   with:
-      #     path: ~/.nuget/packages
-      #     key: ${{ runner.os }}-nuget-${{ hashFiles('**/packages.lock.json') }}
-      #     restore-keys: |
-      #       ${{ runner.os }}-nuget-
-
-  build:
-    needs: [setup]
+  BuildAndDeployContainerApp:
     runs-on: ubuntu-latest
     steps:
-    -
-        name: Checkout
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-
-    -
-        name: Login to Docker Hub
-        uses: docker/login-action@v3
-        with:
-          username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_TOKEN }}
-
-    -
-        name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
-    -
-        name: Build and push
-        uses: docker/build-push-action@v5
-        with:
-          context: ./Catalog
-          file: ./Catalog/Dockerfile
-          push: true
-          tags: ${{ secrets.DOCKERHUB_USERNAME }}/library-management-catalog:latest
-
-  deploy:
-    needs: [build]
-    runs-on: ubuntu-latest
-    steps:
-    - name: Azure Login
-      uses: azure/login@v1
+    - name: Checkout source code
+      uses: actions/checkout@v4
+    - name: Setup .NET SDK
+      uses: actions/setup-dotnet@v4
       with:
-        creds: ${{ secrets.AZURE_CREDENTIALS }}
-
-    - name: Azure CLI script
-      uses: azure/CLI@v1
+        dotnet-version: ${{ env.DOTNET_CORE_VERSION }}
+    - name: Azure login
+      uses: azure/login@v2
       with:
-        inlineScript: |
-          az webapp config container set --name catalog-container-app --resource-group LibraryManagement --docker-custom-image-name vandreas73/library-management-catalog:latest
+        creds: ${{ secrets.managedEnvironment_LibraryManageme_a030_SPN }}
+    - name: Container App deploy
+      uses: azure/container-apps-deploy-action@v1
+      with:
+        appSourcePath: ${{ github.workspace }}
+        acrName: ${{ env.CONTAINER_REGISTRY_NAME }}
+        acrUsername: ${{ secrets.CatalogContainerRegistry_USERNAME_810F }}
+        acrPassword: ${{ secrets.CatalogContainerRegistry_PASSWORD_810F }}
+        imageToBuild: ${{ env.CONTAINER_REGISTRY_LOGIN_SERVER }}/${{ env.CONTAINER_APP_NAME }}:${{ github.sha }}
+        containerAppName: ${{ env.CONTAINER_APP_NAME }}
+        containerAppEnvironment: ${{ env.CONTAINER_APP_ENVIRONMENT_NAME }}
+        resourceGroup: ${{ env.RESOURCE_GROUP }}
