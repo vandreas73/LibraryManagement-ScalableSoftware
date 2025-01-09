@@ -35,4 +35,5 @@ jobs:
         containerAppEnvironment: ${{ env.CONTAINER_APP_ENVIRONMENT_NAME }}
         resourceGroup: ${{ env.RESOURCE_GROUP }}
         environmentVariables: |
+            ASPNETCORE_ENVIRONMENT=Development
             ConnectionStrings__CatalogContext=${{ secrets.ConnectionStrings__CatalogContext }}
