@@ -36,3 +36,4 @@ jobs:
         resourceGroup: ${{ env.RESOURCE_GROUP }}
         environmentVariables: |
           ConnectionStrings__CatalogContext=${{ secrets.ConnectionStrings__CatalogContext }}
+          ASPNETCORE_ENVIRONMENT=Development
