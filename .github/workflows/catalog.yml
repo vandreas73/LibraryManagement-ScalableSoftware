@@ -53,6 +53,7 @@ jobs:
             ${{ runner.os }}-nuget-
 
   build:
+    needs: [setup]
     runs-on: ubuntu-latest
     steps:
     -
@@ -75,7 +76,7 @@ jobs:
         name: Build and push
         uses: docker/build-push-action@v5
         with:
-          context: .
-          file: ./Catalog/Dockerfile
+          context: ./Catalog
+          file: ./Dockerfile
           push: true
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/library-management-catalog:latest
