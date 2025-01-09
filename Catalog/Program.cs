@@ -7,7 +7,7 @@ using FluentValidation;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddDbContext<CatalogContext>(options =>
-		options.UseSqlServer(builder.Configuration.GetConnectionString("CatalogContext") ?? throw new InvalidOperationException("Connection string 'MvcMovieContext' not found.")));
+		options.UseSqlServer(builder.Configuration.GetConnectionString("CatalogContext") ?? throw new InvalidOperationException("Connection string 'CatalogContext' not found.")));
 
 // Add services to the container.
 

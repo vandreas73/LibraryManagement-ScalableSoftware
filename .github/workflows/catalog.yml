@@ -23,6 +23,9 @@ jobs:
       uses: azure/login@v2
       with:
         creds: ${{ secrets.managedEnvironment_LibraryManageme_a030_SPN }}
+    - name: echo test secret
+      run: echo ${{ secrets.test }}
+
     - name: Container App deploy
       uses: azure/container-apps-deploy-action@v1
       with:
