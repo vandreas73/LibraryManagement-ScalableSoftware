@@ -31,10 +31,10 @@ jobs:
         acrUsername: ${{ secrets.CatalogContainerRegistry_USERNAME_504C }}
         acrPassword: ${{ secrets.CatalogContainerRegistry_PASSWORD_504C }}
         imageToBuild: ${{ env.CONTAINER_REGISTRY_LOGIN_SERVER }}/${{ env.CONTAINER_APP_NAME }}:${{ github.sha }}
+        dockerfilePath: /workspace/UserManagementService/Dockerfile
         containerAppName: ${{ env.CONTAINER_APP_NAME }}
         containerAppEnvironment: ${{ env.CONTAINER_APP_ENVIRONMENT_NAME }}
         resourceGroup: ${{ env.RESOURCE_GROUP }}
         environmentVariables: | 
           ASPNETCORE_ENVIRONMENT=Development
           ConnectionStrings__UserContext='${{ secrets.ConnectionStrings__UserContext }}'
-        startup-project: "/workspace/UserManagementService/UserManagementService.csproj"
