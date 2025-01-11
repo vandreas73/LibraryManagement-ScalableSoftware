@@ -7,7 +7,8 @@ using FluentValidation;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddDbContext<CatalogContext>(options =>
-		options.UseSqlServer(builder.Configuration.GetConnectionString("CatalogContext") ?? throw new InvalidOperationException("Connection string 'CatalogContext' not found.")));
+		options.UseSqlServer(builder.Configuration.GetConnectionString("CatalogContext") ?? throw new InvalidOperationException("Connection string 'CatalogContext' not found."),
+		sqlOptions => sqlOptions.EnableRetryOnFailure()));
 
 // Add services to the container.
 
@@ -35,12 +36,6 @@ if (app.Environment.IsDevelopment())
 	app.UseSwagger();
 	app.UseSwaggerUI();
 }
-
-if (app.Environment.IsDevelopment())
-{
-	app.UseSwagger();
-	app.UseSwaggerUI();
-};
 
 app.UseHttpsRedirection();
 
