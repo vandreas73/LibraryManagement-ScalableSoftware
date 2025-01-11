@@ -9,6 +9,10 @@
     <DockerfileContext>.</DockerfileContext>
   </PropertyGroup>
 
+	<Target Name="CopyProtoFiles" BeforeTargets="Build">
+		<Copy SourceFiles="..\UserManagementService\Protos\user.proto" DestinationFolder="Protos\" />
+	</Target>
+
   <ItemGroup>
     <PackageReference Include="Google.Protobuf" Version="3.29.3" />
     <PackageReference Include="Grpc.Net.Client" Version="2.67.0" />
@@ -20,7 +24,7 @@
   </ItemGroup>
 
 	<ItemGroup>
-		<Protobuf Include="Protos\greet.proto" GrpcServices="Client" />
+		<Protobuf Include="Protos\user.proto" GrpcServices="Client" />
 	</ItemGroup>
 
 </Project>
