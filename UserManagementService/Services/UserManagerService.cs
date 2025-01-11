@@ -1,7 +1,9 @@
 using AutoMapper;
+using FluentValidation;
 using Google.Protobuf.WellKnownTypes;
 using Grpc.Core;
 using Microsoft.EntityFrameworkCore;
+using System.ComponentModel.DataAnnotations;
 using UserManagementService;
 using UserManagementService.Models;
 
@@ -12,20 +14,15 @@ namespace UserManagementService.Services
 		private readonly ILogger<UserManagerService> _logger;
 		private readonly UserContext userContext;
 		private readonly IMapper mapper;
+		private readonly IValidator<UserDTO> validator;
 
-		public UserManagerService(ILogger<UserManagerService> logger, UserContext userContext, IMapper mapper)
+		public UserManagerService(ILogger<UserManagerService> logger, 
+			UserContext userContext, IMapper mapper, IValidator<UserDTO> validator)
 		{
 			_logger = logger;
 			this.userContext = userContext;
 			this.mapper = mapper;
-		}
-
-		public override Task<HelloReply> SayHello(HelloRequest request, ServerCallContext context)
-		{
-			return Task.FromResult(new HelloReply
-			{
-				Message = "Hello " + request.Name
-			});
+			this.validator = validator;
 		}
 
 		public override async Task<UserDTO> Get(UserIdRequest request, ServerCallContext context)
@@ -53,14 +50,16 @@ namespace UserManagementService.Services
 			{
 				throw new RpcException(new Status(StatusCode.InvalidArgument, "Id should not be provided"));
 			}
+			await ValidateUser(request);
 			var user = mapper.Map<UserModel>(request);
-			userContext.Users.Add(user);
+			await userContext.Users.AddAsync(user);
 			await userContext.SaveChangesAsync();
 			return mapper.Map<UserDTO>(user);
 		}
 
 		public override async Task<UserDTO> Update(UserDTO request, ServerCallContext context)
 		{
+			await ValidateUser(request);
 			var user = mapper.Map<UserModel>(request);
 			if (!userContext.Users.Any(u => u.Id == user.Id))
 			{
@@ -91,6 +90,16 @@ namespace UserManagementService.Services
 			foreach (var user in users)
 			{
 				await responseStream.WriteAsync(mapper.Map<UserDTO>(user));
+			}
+		}
+
+		private async Task ValidateUser(UserDTO request)
+		{
+			FluentValidation.Results.ValidationResult result = await validator.ValidateAsync(request);
+
+			if (!result.IsValid)
+			{
+				throw new RpcException(new Status(StatusCode.InvalidArgument, result.ToString("~")));
 			}
 		}
 	}

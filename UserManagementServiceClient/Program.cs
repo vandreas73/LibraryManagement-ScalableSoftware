@@ -6,20 +6,18 @@ using UserManagementService;
 
 Console.WriteLine("Hello, World!");
 
-using var channel = GrpcChannel.ForAddress("https://localhost:7275");
+using var channel = GrpcChannel.ForAddress("http://localhost:32770");
 var client = new UserManager.UserManagerClient(channel);
-var reply = await client.SayHelloAsync(new HelloRequest { Name = "GreeterClient" });
-Console.WriteLine($"Greeting {reply.Message}");
 
 var getReply = await client.GetAsync(new UserIdRequest { Id = 2});
 Console.WriteLine($"User {getReply}");
 
 
-//var addReply = await client.CreateAsync(new UserDTO { Name = "Cecil", Email = "c@c.com", Address = "2345 Alcsútdoboz, Ady Endre u. 1." });
+//var addReply = client.Create(new UserDTO { Name = "Dénes", Email = "d@d.com", Address = "2345 Alcsútdoboz, Ady Endre u. 1." });
 
-//var updateReply = await client.UpdateAsync(new UserDTO { Id = 3, Name = "Cecil", Email = "c@updated.com", Address = "2345 Alcsútdoboz, Ady Endre u. 1." });
+//var updateReply = await client.UpdateAsync(new UserDTO { Id = 8, Name = "Cecil", Email = "c@updated.com", Address = "2345 Alcsútdoboz, Ady Endre u. 1." });
 
-//var deleteReply = await client.DeleteAsync(new UserIdRequest { Id = 3 });
+//var deleteReply = await client.DeleteAsync(new UserIdRequest { Id = 7 });
 
 
 var getAllReply = client.GetAll(new Google.Protobuf.WellKnownTypes.Empty());

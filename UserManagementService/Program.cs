@@ -3,6 +3,9 @@ using Microsoft.EntityFrameworkCore;
 using UserManagementService;
 using UserManagementService.Models;
 using UserManagementService.Services;
+using FluentValidation;
+using UserManagementService.Validators;
+using FluentValidation.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -11,6 +14,9 @@ builder.Services.AddDbContextPool<UserContext>(opt =>
 
 // Add services to the container.
 builder.Services.AddGrpc();
+
+builder.Services.AddValidatorsFromAssemblyContaining<UserValidator>();
+builder.Services.AddFluentValidationAutoValidation();
 
 builder.Services.AddAutoMapper(typeof(Program).Assembly);
 

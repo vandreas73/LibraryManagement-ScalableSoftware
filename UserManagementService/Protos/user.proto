@@ -6,26 +6,13 @@ package user;
 
 import "google/protobuf/empty.proto";
 
-// The greeting service definition.
 service UserManager {
-  // Sends a greeting
-  rpc SayHello (HelloRequest) returns (HelloReply);
   rpc Get (UserIdRequest) returns (UserDTO);
   rpc GetAll (google.protobuf.Empty) returns (stream UserDTO);
   rpc Create (UserDTO) returns (UserDTO);
   rpc Update (UserDTO) returns (UserDTO);
   rpc Delete (UserIdRequest) returns (google.protobuf.Empty);
   rpc Search (UserDTO) returns (stream UserDTO);
-}
-
-// The request message containing the user's name.
-message HelloRequest {
-  string name = 1;
-}
-
-// The response message containing the greetings.
-message HelloReply {
-  string message = 1;
 }
 
 message UserIdRequest {
