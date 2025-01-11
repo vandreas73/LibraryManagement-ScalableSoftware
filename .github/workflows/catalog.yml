@@ -3,7 +3,7 @@ on:
     branches:
     - main
 env:
-  DOTNET_CORE_VERSION: 7.0.x
+  DOTNET_CORE_VERSION: 8.0.x
   CONTAINER_APP_NAME: catalog-container-app
   CONTAINER_APP_ENVIRONMENT_NAME: managedEnvironment-LibraryManageme-a030
   RESOURCE_GROUP: LibraryManagement
@@ -35,4 +35,4 @@ jobs:
         containerAppEnvironment: ${{ env.CONTAINER_APP_ENVIRONMENT_NAME }}
         resourceGroup: ${{ env.RESOURCE_GROUP }}
         environmentVariables: | 
-          ASPNETCORE_ENVIRONMENT=Development ConnectionStrings__CatalogContext="${{ secrets.ConnectionStrings__CatalogContext }}"
+          ASPNETCORE_ENVIRONMENT=Development ConnectionStrings__CatalogContext='${{ secrets.ConnectionStrings__CatalogContext }}'
