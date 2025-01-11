@@ -37,3 +37,4 @@ jobs:
         environmentVariables: | 
           ASPNETCORE_ENVIRONMENT=Development
           ConnectionStrings__UserContext='${{ secrets.ConnectionStrings__UserContext }}'
+        startup-project: "/workspace/UserManagementService/UserManagementService.csproj"
