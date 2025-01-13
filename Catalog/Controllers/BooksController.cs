@@ -27,7 +27,7 @@ namespace Catalog.Controllers
 
 		// GET: api/Books
 		[HttpGet]
-		public async Task<ActionResult<IEnumerable<Book>>> GetBooks()
+		public async Task<ActionResult<IEnumerable<BookDTO>>> GetBooks()
 		{
 			var books = await _context.Books
 				.Include(b => b.Author)
@@ -88,8 +88,12 @@ namespace Catalog.Controllers
 		// POST: api/Books
 		// To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
 		[HttpPost]
-		public async Task<ActionResult<Book>> PostBook(BookDTO bookDto)
+		public async Task<ActionResult<BookDTO>> PostBook(BookDTO bookDto)
 		{
+			if (bookDto.Id != 0)
+			{
+				return BadRequest("Id must be empty.");
+			}
 			var book = mapper.Map<Book>(bookDto);
 			if (!_context.Authors.Any(a => book.AuthorId == a.Id))
 				throw new ValidationException("No author with the given id");
@@ -97,7 +101,7 @@ namespace Catalog.Controllers
 			_context.Books.Add(book);
 			await _context.SaveChangesAsync();
 
-			return CreatedAtAction("GetBook", new { id = book.Id });
+			return CreatedAtAction("GetBook", new { id = book.Id }, mapper.Map<BookDTO>(book));
 		}
 
 		// DELETE: api/Books/5

@@ -83,13 +83,17 @@ namespace Catalog.Controllers
 		// POST: api/Authors
 		// To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
 		[HttpPost]
-		public async Task<ActionResult<Author>> PostAuthor(AuthorDTO authorDto)
+		public async Task<ActionResult<AuthorDTO>> PostAuthor(AuthorDTO authorDto)
 		{
+			if (authorDto.Id != 0)
+			{
+				return BadRequest("Id must be empty.");
+			}
 			var author = mapper.Map<Author>(authorDto);
 			context.Authors.Add(author);
 			await context.SaveChangesAsync();
 
-			return CreatedAtAction("GetAuthor", new { id = author.Id });
+			return CreatedAtAction("GetAuthor", new { id = author.Id }, mapper.Map<AuthorDTO>(author));
 		}
 
 		// DELETE: api/Authors/5
