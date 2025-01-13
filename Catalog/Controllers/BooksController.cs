@@ -39,7 +39,7 @@ namespace Catalog.Controllers
 		[HttpGet("{id}")]
 		public async Task<ActionResult<BookDTO>> GetBook(int id)
 		{
-			var book = await _context.Books.FindAsync(id);
+			var book = await _context.Books.Where(b => b.Id == id).Include(b => b.Author).SingleOrDefaultAsync();
 
 			if (book == null)
 			{
