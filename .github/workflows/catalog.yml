@@ -35,4 +35,4 @@ jobs:
         containerAppEnvironment: ${{ env.CONTAINER_APP_ENVIRONMENT_NAME }}
         resourceGroup: ${{ env.RESOURCE_GROUP }}
         environmentVariables: | 
-          ASPNETCORE_ENVIRONMENT=Development ConnectionStrings__CatalogContext='${{ secrets.ConnectionStrings__CatalogContext }}' managedEnvironment='${{ secrets.managedEnvironment_LibraryManageme_a030_SPN }}' USERNAME_38D9='${{ secrets.CatalogContainerRegistry_USERNAME_38D9 }}' PASSWORD_38D9='${{ secrets.CatalogContainerRegistry_PASSWORD_38D9 }}'
+          ASPNETCORE_ENVIRONMENT=Development ConnectionStrings__CatalogContext='${{ secrets.ConnectionStrings__CatalogContext }}' USERNAME_38D9='${{ secrets.CatalogContainerRegistry_USERNAME_38D9 }}' PASSWORD_38D9='${{ secrets.CatalogContainerRegistry_PASSWORD_38D9 }}'
